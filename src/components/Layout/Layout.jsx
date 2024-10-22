@@ -35,7 +35,7 @@ const Layout = () => {
               <div className="router">
                 <Router />
               </div>
-              <Footer />
+              {/* <Footer /> */}
             </div>
           </div>
         </>

@@ -10,10 +10,12 @@
   min-width: 220px;
   width: 220px;
   background: #001529;
-  min-height: fit-content;
+  min-height: 100%;
   &_wrapper {
-    height: 100vh;
+    min-height: 150vh !important;
+    max-height: 300vh;
   }
+
   &_title {
     font-weight: 500;
     background-color: transparent;
