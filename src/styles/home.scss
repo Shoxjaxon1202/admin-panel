@@ -1,0 +1,92 @@
+.home {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+}
+
+.menu {
+  min-width: 220px;
+  width: 220px;
+  background: #001529;
+  min-height: fit-content;
+  &_wrapper {
+    height: 100vh;
+  }
+  &_title {
+    font-weight: 500;
+    background-color: transparent;
+    cursor: pointer;
+    font-size: 24px;
+    color: rgba(255, 255, 255, 0.65);
+    width: 100%;
+    height: 66px;
+    text-align: center;
+    vertical-align: middle;
+    padding-top: 20px;
+
+    &:hover {
+      color: #fff;
+      transition: color 0.5s !important;
+    }
+  }
+  &_cards {
+    display: flex;
+    align-items: start;
+    flex-direction: column;
+    gap: 0;
+    a {
+      color: rgba(255, 255, 255, 0.65);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      height: 25px;
+      &:hover {
+        color: #fff;
+        transition: color 0.5s !important;
+      }
+    }
+  }
+  &_text {
+    font-size: 16px;
+    font-weight: 600;
+  }
+  &_icon {
+    font-size: 22px;
+  }
+}
+
+.menu_item {
+  border-radius: 10px;
+  width: 100%;
+
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  a {
+    width: 100%;
+    height: 100%;
+    padding: 10px;
+  }
+}
+
+.menu_item.active {
+  background-color: #1677ff;
+  a {
+    color: #fff;
+  }
+}
+
+.menu_link {
+  text-decoration: none;
+  color: black;
+}
+
+.menu_link:hover {
+  color: #1677ff;
+}
+
+.menu_icon {
+  margin-right: 10px;
+}
