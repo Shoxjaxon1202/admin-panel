@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import { CiUser } from "react-icons/ci";
 import { RiLockPasswordLine } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
+import "react-toastify/dist/ReactToastify.css";
+
 import "./login.scss";
 
 const Login = () => {
