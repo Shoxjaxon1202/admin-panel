@@ -6,7 +6,9 @@
   justify-content: center;
   align-items: center;
 }
-
+.table_wrapper {
+  width: 100%;
+}
 table {
   width: 100%;
   height: 100%;
@@ -15,10 +17,37 @@ table {
     padding: 20px 10px;
   }
 }
+.table_top {
+  margin-bottom: 30px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.table_btn {
+  background-color: #28a745; /* Tugma rangi (yashil) */
+  color: white; /* Matn rangi */
+  padding: 12px 20px; /* Tugma ichidagi bo'sh joy */
+  border: none; /* Chegarani olib tashlash */
+  border-radius: 5px; /* Burchaklarni yumshatish */
+  font-size: 16px; /* Matn o'lchami */
+  cursor: pointer; /* Ko'rsatkichni o'zgartirish */
+  transition: all 0.3s ease; /* Animatsiya */
+}
+
+.table_btn:hover {
+  background-color: #218838; /* Hoverda rangi o'zgaradi */
+  transform: scale(1.05); /* Tugmani kattalashtirish */
+}
+
+.table_btn:active {
+  transform: scale(0.95); /* Bosilganda tugmani kichraytirish */
+}
 
 th,
 td {
-  width: 25%;
+  // width: 25%;
   color: rgba(0, 0, 0, 0.88);
   padding: 10px;
   text-align: start;
