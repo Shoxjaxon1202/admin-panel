@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import EditModal from "../EditModal/EditModal";
 import AddCategoryModal from "../AddCategoryModal/AddCategoryModal";
 import Pagination from "./Pagination"; // Paginatsiya komponentini import qilish
+import { useLocation } from "react-router-dom";
 
 const Table = () => {
   const [categories, setCategories] = useState([]);
@@ -13,36 +14,37 @@ const Table = () => {
   const [isEditModalOpen, setEditModalOpen] = useState(false);
   const [isAddModalOpen, setAddModalOpen] = useState(false);
 
+  const locations = useLocation().pathname;
+
   const [currentPage, setCurrentPage] = useState(1); // Hozirgi sahifa
   const [itemsPerPage] = useState(5); // Har bir sahifada ko'rsatiladigan elementlar soni
 
-  const getCategories = async () => {
+  const getApi = async () => {
     try {
       const response = await axios.get(
-        `https://autoapi.dezinfeksiyatashkent.uz/api/categories`
+        `https://autoapi.dezinfeksiyatashkent.uz/api/${locations}`
       );
       setCategories(response.data.data);
     } catch (error) {
-      console.error("Kategoriyalarni olishda xatolik:", error);
-      toast.error("Kategoriyalarni olishda xatolik yuz berdi.");
+      toast.error("Get qilishda xatolik yuzaga keldi");
     }
   };
 
   useEffect(() => {
-    getCategories();
+    getApi();
   }, []);
 
   const deleteCategories = async (id) => {
     const token = localStorage.getItem("token");
     try {
       const response = await axios.delete(
-        `https://autoapi.dezinfeksiyatashkent.uz/api/categories/${id}`,
+        `https://autoapi.dezinfeksiyatashkent.uz/api/${locations}/${id}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
       toast.success(response.data.message);
-      getCategories();
+      getApi();
     } catch (error) {
       toast.error("Xatolik yuz berdi");
     }
@@ -60,66 +62,184 @@ const Table = () => {
     indexOfFirstCategory,
     indexOfLastCategory
   );
+  console.log(categories);
 
   return (
     <div className="table-container">
       <div className="table_wrapper">
         <div className="table_top">
-          <h3>Salom</h3>
+          <h3>{locations.slice(1).toUpperCase()}</h3>
           <button className="table_btn" onClick={() => setAddModalOpen(true)}>
             Add Categories
           </button>
         </div>
         <table>
           <thead>
-            <tr>
-              <th>name_en</th>
-              <th>name_ru</th>
-              <th>Image</th>
-              <th>Column 4</th>
-              <th>Column 5</th>
-              <th>Column 6</th>
-              <th>Action</th>
-            </tr>
+            {locations === "/categories" ? (
+              <tr>
+                <th>Name(English)</th>
+                <th>Name(Russian)</th>
+                <th>Image</th>
+                <th>Created at</th>
+                <th>Action</th>
+              </tr>
+            ) : locations === "/brands" ? (
+              <tr>
+                <th>Model</th>
+                <th>Image</th>
+                <th>Created at</th>
+                <th>Action</th>
+              </tr>
+            ) : locations === "/models" ? (
+              <tr>
+                <th>Name</th>
+                <th>Brand</th>
+                <th>Action</th>
+              </tr>
+            ) : locations === "/cities" || locations === "/locations" ? (
+              <tr>
+                <th>Name</th>
+                <th>Text</th>
+                <th>Images</th>
+                <th>Action</th>
+              </tr>
+            ) : null}
           </thead>
           <tbody>
-            {currentCategories.length ? (
-              currentCategories.map((item) => (
-                <tr key={item.id}>
-                  <td>{item.name_en}</td>
-                  <td>{item.name_ru}</td>
-                  <td>
-                    <img
-                      width={100}
-                      height={70}
-                      src={`https://autoapi.dezinfeksiyatashkent.uz/api/uploads/images/${item.image_src}`}
-                      alt={item.name_en}
-                    />
-                  </td>
-                  <td>Column 4 Data</td> {/* Qo'shimcha ustunlar */}
-                  <td>Column 5 Data</td>
-                  <td>Column 6 Data</td>
-                  <td>
-                    <button
-                      onClick={() => handleEditClick(item)}
-                      className="table_button edit">
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => deleteCategories(item.id)}
-                      className="table_button remove">
-                      Remove
-                    </button>
+            {locations == "/categories" ? (
+              currentCategories.length ? (
+                currentCategories.map((item) => (
+                  <tr key={item.id}>
+                    <td>{item.name_en}</td>
+                    <td>{item.name_ru}</td>
+                    <td>
+                      <img
+                        width={100}
+                        height={70}
+                        src={`https://autoapi.dezinfeksiyatashkent.uz/api/uploads/images/${item.image_src}`}
+                        alt={item.name_en}
+                      />
+                    </td>
+                    <td>{item.created_at}</td>
+                    <td>
+                      <button
+                        onClick={() => handleEditClick(item)}
+                        className="table_button edit">
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => deleteCategories(item.id)}
+                        className="table_button remove">
+                        Remove
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="7">
+                    <Loader />
                   </td>
                 </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="7">
-                  <Loader />
-                </td>
-              </tr>
-            )}
+              )
+            ) : locations === "/brands" ? (
+              currentCategories.length ? (
+                currentCategories.map((item) => (
+                  <tr key={item.id}>
+                    <td>{item.title}</td>
+                    <td>
+                      <img
+                        width={100}
+                        height={70}
+                        src={`https://autoapi.dezinfeksiyatashkent.uz/api/uploads/images/${item.image_src}`}
+                        alt={item.name_en}
+                      />
+                    </td>
+                    <td>{item.created_at}</td>
+                    <td>
+                      <button
+                        onClick={() => handleEditClick(item)}
+                        className="table_button edit">
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => deleteCategories(item.id)}
+                        className="table_button remove">
+                        Remove
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="7">
+                    <Loader />
+                  </td>
+                </tr>
+              )
+            ) : locations === "/models" ? (
+              currentCategories.length ? (
+                currentCategories.map((item) => (
+                  <tr key={item.id}>
+                    <td>{item?.name}</td>
+                    <td>{item?.brand_title}</td>
+                    <td>
+                      <button
+                        onClick={() => handleEditClick(item)}
+                        className="table_button edit">
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => deleteCategories(item.id)}
+                        className="table_button remove">
+                        Remove
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="7">
+                    <Loader />
+                  </td>
+                </tr>
+              )
+            ) : locations === "/cities" || locations === "/locations" ? (
+              currentCategories.length ? (
+                currentCategories.map((item) => (
+                  <tr key={item.id}>
+                    <td>{item?.name}</td>
+                    <td>{item?.text}</td>
+                    <td>
+                      <img
+                        width={100}
+                        height={70}
+                        src={`https://autoapi.dezinfeksiyatashkent.uz/api/uploads/images/${item.image_src}`}
+                        alt={item.name_en}
+                      />
+                    </td>
+                    <td>
+                      <button
+                        onClick={() => handleEditClick(item)}
+                        className="table_button edit">
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => deleteCategories(item.id)}
+                        className="table_button remove">
+                        Remove
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="7">
+                    <Loader />
+                  </td>
+                </tr>
+              )
+            ) : null}
           </tbody>
         </table>
         <Pagination
@@ -134,14 +254,14 @@ const Table = () => {
         <EditModal
           selectedCategory={selectedCategory}
           closeModal={() => setEditModalOpen(false)}
-          refreshCategories={getCategories}
+          refreshCategories={getApi}
         />
       )}
 
       {isAddModalOpen && (
         <AddCategoryModal
           closeModal={() => setAddModalOpen(false)}
-          refreshCategories={getCategories}
+          refreshCategories={getApi}
         />
       )}
     </div>

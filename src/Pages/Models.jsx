@@ -1,11 +1,12 @@
-import React from 'react'
+import React from "react";
+import Table from "../components/Table.jsx/Table";
 
 const Models = () => {
   return (
     <div>
-      <h2>Modals</h2>
+      <Table />
     </div>
   );
-}
+};
 
-export default Models
+export default Models;

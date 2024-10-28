@@ -1,11 +1,12 @@
-import React from 'react'
+import React from "react";
+import Table from "../components/Table.jsx/Table";
 
 const Brands = () => {
   return (
     <div>
-      <h2>Brands</h2>
+      <Table/>
     </div>
   );
-}
+};
 
-export default Brands
+export default Brands;

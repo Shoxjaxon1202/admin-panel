@@ -16,7 +16,7 @@ const Layout = () => {
 
   useEffect(() => {
     if (token?.includes("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.ey")) {
-      navigate("/dashboard");
+      navigate("/categories");
     } else {
       navigate("/");
     }

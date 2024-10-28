@@ -2,37 +2,70 @@ import React, { useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import "./modal.scss";
+import { useLocation } from "react-router-dom";
 
 const EditModal = ({ selectedCategory, closeModal, refreshCategories }) => {
-  // Dastlabki state (formData) ichida rasm uchun 'image_src' null qiymat bilan boshlanadi
+  const location = useLocation().pathname;
+  const isCategory = location === "/categories";
+  const isModel = location === "/models";
+  const isBrand = location === "/brands";
+  const isCities = location === "/cities";
+  const isLocations = location === "/locations";
+
   const [formData, setFormData] = useState({
-    name_en: selectedCategory.name_en,
-    name_ru: selectedCategory.name_ru,
-    image_src: null, // Rasm uchun joy ajratilgan, dastlab hech qanday rasm tanlanmagan
+    title: selectedCategory?.name_en || selectedCategory?.name || "",
+    name_ru: isCategory
+      ? selectedCategory?.name_ru || ""
+      : isCities || isLocations
+      ? selectedCategory?.text || ""
+      : "",
+    brand_title: isModel ? selectedCategory?.brand_title || "" : "",
+    image: null, // Rasmni saqlash uchun
   });
-  
+
   const handleFormChange = (e) => {
     const { name, value, files } = e.target;
     setFormData((prevData) => ({
       ...prevData,
-      [name]: name === "image_src" ? files[0] : value,
+      [name]: files ? files[0] : value,
     }));
   };
-  // Yangilash funksiyasi
+
   const handleUpdate = async () => {
     const token = localStorage.getItem("token");
     const updateData = new FormData();
 
-    updateData.append("name_en", formData.name_en);
-    updateData.append("name_ru", formData.name_ru);
-
-    if (formData.image_src) {
-      updateData.append("images", formData.image_src);
+    if (isModel) {
+      updateData.append("name", formData.title);
+      updateData.append("brand_id", selectedCategory.brand_id);
+      updateData.append("brand_title", formData.brand_title);
+    } else if (isCities || isLocations) {
+      updateData.append("name", formData.title);
+      updateData.append("text", formData.name_ru);
+      updateData.append("images", formData.image);
+    } else {
+      updateData.append(isCategory ? "name_en" : "title", formData.title);
+      if (isCategory) updateData.append("name_ru", formData.name_ru);
+      if ((isCategory || isBrand) && formData.image) {
+        updateData.append("images", formData.image);
+      }
     }
 
     try {
       const response = await axios.put(
-        `https://autoapi.dezinfeksiyatashkent.uz/api/categories/${selectedCategory.id}`,
+        `https://autoapi.dezinfeksiyatashkent.uz/api/${
+          isCategory
+            ? "categories"
+            : isModel
+            ? "models"
+            : isBrand
+            ? "brands"
+            : isCities
+            ? "cities"
+            : isLocations
+            ? "locations"
+            : null
+        }/${selectedCategory.id}`,
         updateData,
         {
           headers: {
@@ -50,7 +83,7 @@ const EditModal = ({ selectedCategory, closeModal, refreshCategories }) => {
         toast.warning(response.data.message);
       }
     } catch (error) {
-      console.error("Yangilashda xatolik:", error);
+      console.error("Error during update:", error);
       toast.error("Yangilashda xatolik yuz berdi.");
     }
   };
@@ -61,29 +94,57 @@ const EditModal = ({ selectedCategory, closeModal, refreshCategories }) => {
         <button className="close-modal" onClick={closeModal}>
           &times;
         </button>
-        <h2>Edit Category</h2>
+        <h2>
+          {isCategory ? "Edit Category" : isModel ? "Edit Model" : "Edit Brand"}
+        </h2>
         <input
           required
           type="text"
-          name="name_en"
-          value={formData.name_en}
+          name="title"
+          value={formData.title}
           onChange={handleFormChange}
-          placeholder="English Name"
+          placeholder={
+            isCategory ? "English Name" : isModel ? "Model Name" : "Title"
+          }
         />
-        <input
-          required
-          type="text"
-          name="name_ru"
-          value={formData.name_ru}
-          onChange={handleFormChange}
-          placeholder="Russian Name"
-        />
-        <input
-          required
-          type="file"
-          name="image_src"
-          onChange={handleFormChange}
-        />
+        {isCategory && (
+          <input
+            required
+            type="text"
+            name="name_ru"
+            value={formData.name_ru}
+            onChange={handleFormChange}
+            placeholder="Russian Name"
+          />
+        )}
+        {isModel && (
+          <input
+            required
+            type="text"
+            name="brand_title"
+            value={formData.brand_title}
+            onChange={handleFormChange}
+            placeholder="Brand Title"
+          />
+        )}
+        {(isCities || isLocations) && (
+          <input
+            required
+            type="text"
+            name="name_ru"
+            value={formData.name_ru}
+            onChange={handleFormChange}
+            placeholder="Text"
+          />
+        )}
+        {(isCategory || isBrand || isCities || isLocations) && (
+          <input
+            type="file"
+            name="image"
+            onChange={handleFormChange}
+            accept="image/*"
+          />
+        )}
         <button onClick={handleUpdate}>Update</button>
       </div>
     </div>

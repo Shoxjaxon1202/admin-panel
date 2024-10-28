@@ -1,9 +1,10 @@
 import React from 'react'
+import Table from '../components/Table.jsx/Table';
 
 const Cities = () => {
   return (
     <div>
-      <h2>Cities</h2>
+      <Table/>
     </div>
   );
 }

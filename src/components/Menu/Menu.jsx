@@ -24,19 +24,19 @@ const Menu = () => {
           <div
             className={`menu_item ${activeIndex === 0 ? "active" : ""}`}
             onClick={() => handleSetActive(0)}>
-            <NavLink to="/dashboard" className="menu_link">
+            <NavLink to="/categories" className="menu_link">
               <IoMdHome className="menu_icon" />
               <h4 className="menu_text">Dashboard</h4>
             </NavLink>
           </div>
-          <div
+          {/* <div
             className={`menu_item ${activeIndex === 1 ? "active" : ""}`}
             onClick={() => handleSetActive(1)}>
             <NavLink to="/settings" className="menu_link">
               <IoSettingsOutline className="menu_icon" />
               <h4 className="menu_text">Settings</h4>
             </NavLink>
-          </div>
+          </div> */}
           <div
             className={`menu_item ${activeIndex === 2 ? "active" : ""}`}
             onClick={() => handleSetActive(2)}>
