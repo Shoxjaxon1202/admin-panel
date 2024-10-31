@@ -1,9 +1,10 @@
 import React from "react";
+import Table from "../components/Table.jsx/Table";
 
 const Cars = () => {
   return (
     <div>
-      <h2>Cars</h2>
+      <Table />
     </div>
   );
 };

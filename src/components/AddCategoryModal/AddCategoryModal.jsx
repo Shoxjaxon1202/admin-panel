@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useLocation } from "react-router-dom";
+import AddCarModal from "./AddCarModal";
 
 const AddCategoryModal = ({ closeModal, refreshCategories }) => {
   const [formData, setFormData] = useState({
@@ -9,6 +10,8 @@ const AddCategoryModal = ({ closeModal, refreshCategories }) => {
     name_ru: "",
     image_src: null,
   });
+  const [brands, setBrands] = useState([]);
+  const [selectedBrands, setSelectedBrands] = useState("");
 
   const locations = useLocation().pathname;
 
@@ -35,7 +38,7 @@ const AddCategoryModal = ({ closeModal, refreshCategories }) => {
         return;
       }
     } else if (locations === "/models") {
-      if (!formData.name_en || !formData.name_ru) {
+      if (!formData.name_en) {
         toast.error("Iltimos, barcha maydonlarni to'ldiring.");
         return;
       }
@@ -61,11 +64,11 @@ const AddCategoryModal = ({ closeModal, refreshCategories }) => {
       addData.append("text", formData.name_ru);
     } else if (locations === "/models") {
       addData.append("name", formData.name_en);
-      addData.append("brand_id", formData.name_ru);
+      addData.append("brand_id", selectedBrands); // Tanlangan brand_id ni qo'shamiz
 
       try {
         const response = await axios.post(
-          `https://autoapi.dezinfeksiyatashkent.uz/api/brands`,
+          `https://autoapi.dezinfeksiyatashkent.uz/api/models`,
           addData,
           {
             headers: {
@@ -114,64 +117,94 @@ const AddCategoryModal = ({ closeModal, refreshCategories }) => {
     }
   };
 
+  //GetBrandsApi
+  async function GetBrandsApi() {
+    try {
+      const response = await axios.get(
+        `https://autoapi.dezinfeksiyatashkent.uz/api/brands`
+      );
+      setBrands(response?.data?.data);
+    } catch (error) {
+      toast.error("Brand olishda xatolik yuzaga keldi");
+    }
+  }
+  
+  useEffect(() => {
+    GetBrandsApi();
+  }, []);
+
+  console.log(brands);
+
   return (
     <div className="modal-overlay" onClick={closeModal}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-        <button className="close-modal" onClick={closeModal}>
-          &times;
-        </button>
-        <h2>Add {locations}</h2>
-        <input
-          required
-          type="text"
-          name="name_en"
-          value={formData.name_en}
-          onChange={handleFormChange}
-          placeholder={
-            locations === "/categories"
-              ? "English Name"
-              : locations === "/brands"
-              ? "Brand name"
-              : locations === "/models"
-              ? "Model name"
-              : locations === "/cities" || locations === "/locations"
-              ? "Name"
-              : null
-          }
-        />
-        {locations === "/categories" ||
-        locations === "/models" ||
-        locations === "/cities" ||
-        locations === "/locations" ? (
+      {locations !== "/cars" ? (
+        <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+          <button className="close-modal" onClick={closeModal}>
+            &times;
+          </button>
+          <h2>Add {locations}</h2>
           <input
             required
             type="text"
-            name="name_ru"
-            value={formData.name_ru}
+            name="name_en"
+            value={formData.name_en}
             onChange={handleFormChange}
             placeholder={
               locations === "/categories"
-                ? "Russian Name"
+                ? "English Name"
                 : locations === "/brands"
                 ? "Brand name"
                 : locations === "/models"
-                ? "Brand ID"
+                ? "Model name"
                 : locations === "/cities" || locations === "/locations"
-                ? "Text"
+                ? "Name"
                 : null
             }
           />
-        ) : null}
-        {locations !== "/models" ? (
-          <input
-            required
-            type="file"
-            name="image_src"
-            onChange={handleFormChange}
-          />
-        ) : null}
-        <button onClick={handleAddCategory}>Add</button>
-      </div>
+          {(locations === "/categories" ||
+            locations === "/cities" ||
+            locations === "/locations") && (
+            <input
+              required
+              type="text"
+              name="name_ru"
+              value={formData.name_ru}
+              onChange={handleFormChange}
+              placeholder={
+                locations === "/categories"
+                  ? "Russian Name"
+                  : locations === "/cities" || locations === "/locations"
+                  ? "Text"
+                  : null
+              }
+            />
+          )}
+
+          {locations === "/models" ? (
+            <select
+              name="selectedBrands"
+             
+              onChange={(e) => setSelectedBrands(e?.target?.value)}>
+              {brands.map((elem) => (
+                <option key={elem.id} value={elem.id}>
+                  {elem?.title}
+                </option>
+              ))}
+            </select>
+          ) : (
+            <input
+              required
+              type="file"
+              name="image_src"
+              onChange={handleFormChange}
+            />
+          )}
+
+          <button onClick={handleAddCategory}>Add</button>
+        </div>
+      ) : (
+        <AddCarModal closeModal={closeModal} refreshCars={refreshCategories} />
+      )}
     </div>
   );
 };

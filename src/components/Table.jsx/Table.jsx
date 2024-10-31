@@ -103,6 +103,15 @@ const Table = () => {
                 <th>Images</th>
                 <th>Action</th>
               </tr>
+            ) : locations === "/cars" ? (
+              <tr>
+                <th>Brand</th>
+                <th>Model</th>
+                <th>Color</th>  
+                <th>City</th>
+                <th>Location</th>
+                <th>Action</th>
+              </tr>
             ) : null}
           </thead>
           <tbody>
@@ -217,6 +226,38 @@ const Table = () => {
                         src={`https://autoapi.dezinfeksiyatashkent.uz/api/uploads/images/${item.image_src}`}
                         alt={item.name_en}
                       />
+                    </td>
+                    <td>
+                      <button
+                        onClick={() => handleEditClick(item)}
+                        className="table_button edit">
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => deleteCategories(item.id)}
+                        className="table_button remove">
+                        Remove
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="7">
+                    <Loader />
+                  </td>
+                </tr>
+              )
+            ) : locations === "/cars" ? (
+              currentCategories.length ? (
+                currentCategories.map((item) => (
+                  <tr key={item.id}>
+                    <td>{item?.brand?.title}</td>
+                    <td>{item?.model?.name}</td>
+                    <td>{item?.color}</td>
+                    <td>{item?.city?.name}</td>
+                    <td>
+                      {item?.location?.name}
                     </td>
                     <td>
                       <button
